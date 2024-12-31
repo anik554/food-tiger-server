@@ -41,6 +41,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/addFood",async(req,res)=>{
+      const cursor = addFoodCollection.find()
+      const result = await cursor.toArray()
+      res.send(result)
+    })
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
