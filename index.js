@@ -25,14 +25,19 @@ async function run() {
   try {
     await client.connect();
 
-    const featuredFoodCollection = client
-      .db("foodTiger")
-      .collection("foods");
+    const featuredFoodCollection = client.db("foodTiger").collection("foods");
+
+    const addFoodCollection = client.db("foodTiger").collection("addedFoods");
 
     app.get("/featuredFood", async (req, res) => {
       const cursor = featuredFoodCollection.find();
       const result = await cursor.toArray();
-      console.log("result",result)
+      res.send(result);
+    });
+
+    app.post("/addFood", async (req, res) => {
+      const newFood = req.body;
+      const result = await addFoodCollection.insertOne(newFood);
       res.send(result);
     });
 
