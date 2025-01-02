@@ -28,6 +28,7 @@ async function run() {
     const featuredFoodCollection = client.db("foodTiger").collection("foods");
 
     const addFoodCollection = client.db("foodTiger").collection("addedFoods");
+    const requestedFoodCollection = client.db("foodTiger").collection("requestFoods");
 
     app.get("/featuredFood", async (req, res) => {
       const cursor = featuredFoodCollection.find();
@@ -53,6 +54,25 @@ async function run() {
       const result = await addFoodCollection.findOne(query);
       res.send(result);
     });
+
+    app.patch("/availableFood/:id",async(req,res)=>{
+      const id = req.params.id;
+      const data = req.body;
+      const filter = {_id: new ObjectId(id)}
+      const updatedDoc = {
+        $set:{
+          status: data.status
+        }
+      }
+      const result = await addFoodCollection.updateOne(filter,updatedDoc)
+      res.send(result)
+    })
+
+    app.post("/requestedFoods",async(req,res)=>{
+      const newRequestedFood = req.body;
+      const result = await requestedFoodCollection.insertOne(newRequestedFood)
+      res.send(result)
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log(
