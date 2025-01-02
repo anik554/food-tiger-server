@@ -28,7 +28,9 @@ async function run() {
     const featuredFoodCollection = client.db("foodTiger").collection("foods");
 
     const addFoodCollection = client.db("foodTiger").collection("addedFoods");
-    const requestedFoodCollection = client.db("foodTiger").collection("requestFoods");
+    const requestedFoodCollection = client
+      .db("foodTiger")
+      .collection("requestFoods");
 
     app.get("/featuredFood", async (req, res) => {
       const cursor = featuredFoodCollection.find();
@@ -55,54 +57,60 @@ async function run() {
       res.send(result);
     });
 
-    app.patch("/availableFood/:id",async(req,res)=>{
+    app.patch("/availableFood/:id", async (req, res) => {
       const id = req.params.id;
       const data = req.body;
-      const filter = {_id: new ObjectId(id)}
+      const filter = { _id: new ObjectId(id) };
       const updatedDoc = {
-        $set:{
-          status: data.status
-        }
-      }
-      const result = await addFoodCollection.updateOne(filter,updatedDoc)
-      res.send(result)
-    })
+        $set: {
+          status: data.status,
+        },
+      };
+      const result = await addFoodCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
 
-    app.put("/availableFood/:id",async(req,res)=>{
+    app.put("/availableFood/:id", async (req, res) => {
       const id = req.params.id;
       const data = req.body;
-      const filter = {_id: new ObjectId(id)}
+      const filter = { _id: new ObjectId(id) };
       const updatedDoc = {
-        $set:{
+        $set: {
           donarName: data.donarName,
           donarEmail: data.donarEmail,
-          donarPhoto:data.donarPhoto,
-          foodCreatedAt:data.foodCreatedAt,
-          foodName:data.foodName,
-          foodImageURL:data.foodImageURL,
-          foodQuantity:data.foodQuantity,
-          foodLocation:data.foodLocation,
-          dateTime:data.dateTime,
-          status:data.status,
-          notes:data.notes
-        }
-      }
-      const result = await addFoodCollection.updateOne(filter,updatedDoc)
-      res.send(result)
-    })
+          donarPhoto: data.donarPhoto,
+          foodCreatedAt: data.foodCreatedAt,
+          foodName: data.foodName,
+          foodImageURL: data.foodImageURL,
+          foodQuantity: data.foodQuantity,
+          foodLocation: data.foodLocation,
+          dateTime: data.dateTime,
+          status: data.status,
+          notes: data.notes,
+        },
+      };
+      const result = await addFoodCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
 
+    app.delete("/availableFood/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = addFoodCollection.deleteOne(query);
+      res.send(result);
+    });
 
-    app.post("/requestedFoods",async(req,res)=>{
+    app.post("/requestedFoods", async (req, res) => {
       const newRequestedFood = req.body;
-      const result = await requestedFoodCollection.insertOne(newRequestedFood)
-      res.send(result)
-    })
+      const result = await requestedFoodCollection.insertOne(newRequestedFood);
+      res.send(result);
+    });
 
-    app.get("/requestedFoods",async(req,res)=>{
-      const cursor = requestedFoodCollection.find()
-      const result = await cursor.toArray()
-      res.send(result)
-    })
+    app.get("/requestedFoods", async (req, res) => {
+      const cursor = requestedFoodCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
